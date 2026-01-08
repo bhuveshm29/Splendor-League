@@ -14,8 +14,12 @@ CORS(app)
 db.init_app(app)
 
 # Ensure tables exist (run within app context)
-with app.app_context():
-    db.create_all()
+# Wrapped in try-except to prevent crash if DB is not available yet
+try:
+    with app.app_context():
+        db.create_all()
+except Exception as e:
+    print(f"Error creating database tables: {e}")
 
 
 def admin_required(f):
