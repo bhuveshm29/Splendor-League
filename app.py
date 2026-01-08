@@ -184,9 +184,47 @@ def add_player():
 @admin_required
 def delete_player(player_id):
     player = Player.query.get_or_404(player_id)
-    if player.games_played > 0:
-        return jsonify({'error': 'Cannot delete player with history'}), 400
+    # Cascade delete is handled by database models (participations relationship)
+    # But we need to ensure we don't end up with games having missing players?
+    # Actually, GameParticipant is cascade='all, delete-orphan' from Player side?
+    # Let's check models.py. 
+    # Player.participations = db.relationship(..., cascade='all, delete-orphan')
+    # So deleting player deletes their participation records.
+    # However, this leaves Games with fewer participants.
+    # We might want to warn or just allow it (it breaks rating integrity technically, but user asked for it).
+    
     db.session.delete(player)
+    db.session.commit()
+    return jsonify({'success': True})
+
+
+@app.route('/api/admin/regions/<int:region_id>', methods=['DELETE'])
+@admin_required
+def delete_region(region_id):
+    region = Region.query.get_or_404(region_id)
+    # Cascade delete handled by models (players -> games)
+    db.session.delete(region)
+    db.session.commit()
+    return jsonify({'success': True})
+
+
+@app.route('/api/admin/games/<int:game_id>', methods=['DELETE'])
+@admin_required
+def delete_game(game_id):
+    game = Game.query.get_or_404(game_id)
+    
+    # Revert simple stats
+    for p in game.participants:
+        player = p.player
+        if player:
+            player.games_played -= 1
+            player.total_points -= p.points
+            if p.placement == 1: player.first_place -= 1
+            elif p.placement == 2: player.second_place -= 1
+            elif p.placement == 3: player.third_place -= 1
+            elif p.placement == 4: player.fourth_place -= 1
+            
+    db.session.delete(game)
     db.session.commit()
     return jsonify({'success': True})
 

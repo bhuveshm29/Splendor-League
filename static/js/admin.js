@@ -81,15 +81,43 @@ async function loadRegions() {
         // Clear and add default option
         playerRegionSelect.innerHTML = '<option value="">Select Region</option>';
 
-        regions.forEach(region => {
-            const row = document.createElement('option');
-            row.value = region.id;
-            row.textContent = region.name;
-            playerRegionSelect.appendChild(row);
-        });
-    } catch (error) {
-        console.error('Error loading regions:', error);
+        row.value = region.id;
+        row.textContent = region.name;
+        playerRegionSelect.appendChild(row);
+    });
+
+    // Populate regions list for deletion
+    const regionsList = document.getElementById('regions-list');
+    if (regionsList) {
+        regionsList.innerHTML = '';
+        if (regions.length === 0) {
+            regionsList.innerHTML = '<p class="text-muted">No regions yet</p>';
+        } else {
+            regions.forEach(region => {
+                const div = document.createElement('div');
+                div.className = 'stat-item';
+                div.style.display = 'flex';
+                div.style.justifyContent = 'space-between';
+                div.style.alignItems = 'center';
+                div.style.marginBottom = 'var(--spacing-sm)';
+                div.innerHTML = `
+                        <span>${escapeHtml(region.name)}</span>
+                        <button class="btn btn-danger btn-sm" onclick="handleDeleteRegion(${region.id}, '${escapeHtml(region.name)}')" title="Delete Region">Delete</button>
+                    `;
+                regionsList.appendChild(div);
+            });
+        }
     }
+
+    // Also update a region list for deletion if it exists, or create one?
+    // The HTML doesn't have a region list container. I need to add one in admin.html first?
+    // Or I can dynamically inject it.
+    // Let's modify admin.html to include a region list container first.
+    // Wait, I should do that in a separate step.
+    // For now, let's keep this as-is and assume I'll add the list rendering logic next.
+} catch (error) {
+    console.error('Error loading regions:', error);
+}
 }
 
 // Handle add region
@@ -164,8 +192,7 @@ function createPlayerCard(player) {
             <strong>${escapeHtml(player.name)}</strong>
             <span class="text-muted"> - ${escapeHtml(player.region_name)} - Rating: ${player.rating}</span>
         </div>
-        <button class="btn btn-danger" onclick="handleDeletePlayer(${player.id}, '${escapeHtml(player.name)}')"
-                ${player.games_played > 0 ? 'disabled title="Cannot delete player with game history"' : ''}>
+        <button class="btn btn-danger" onclick="handleDeletePlayer(${player.id}, '${escapeHtml(player.name)}')" title="Delete Player">
             Delete
         </button>
     `;
@@ -393,9 +420,12 @@ function createGameCard(game) {
     }).join('');
 
     div.innerHTML = `
-        <div style="margin-bottom: var(--spacing-sm);">
-            <strong>Game #${game.id}</strong>
-            <span class="text-muted"> - ${date}</span>
+        <div style="margin-bottom: var(--spacing-sm); display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <strong>Game #${game.id}</strong>
+                <span class="text-muted"> - ${date}</span>
+            </div>
+            <button class="btn btn-danger btn-sm" onclick="handleDeleteGame(${game.id})" style="padding: 2px 8px; font-size: 12px;">Delete</button>
         </div>
         ${participantsHtml}
     `;
