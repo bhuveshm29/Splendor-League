@@ -51,8 +51,8 @@ class Player(db.Model):
     
     @property
     def rating(self):
-        """Conservative rating (mu - 3*sigma) used for leaderboard"""
-        return int(max(0, round(self.mu - 3 * self.sigma)))
+        """Conservative rating (mu - 3*sigma + 1000) so new players start at 1000"""
+        return int(max(0, round(self.mu - 3 * self.sigma + 1000)))
     
     @property
     def average_points(self):
@@ -125,8 +125,9 @@ class GameParticipant(db.Model):
     
     @property
     def rating_change(self):
-        rating_before = int(round(self.mu_before))
-        rating_after = int(round(self.mu_after))
+        # Calculate rating using the same formula: mu - 3*sigma + 1000
+        rating_before = int(max(0, round(self.mu_before - 3 * self.sigma_before + 1000)))
+        rating_after = int(max(0, round(self.mu_after - 3 * self.sigma_after + 1000)))
         return rating_after - rating_before
     
     def to_dict(self):
