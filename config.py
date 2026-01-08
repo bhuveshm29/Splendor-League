@@ -21,8 +21,8 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # Admin credentials
-    ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME') or 'Bhuvesh'
-    ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD') or 'ATFbhuveshAnmol'
+    ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME') or 'admin'
+    ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD') or 'change_in_production'
     
     # OpenSkill parameters for Plackett-Luce model
     OPENSKILL_MU = 1000.0  # Initial rating mean
