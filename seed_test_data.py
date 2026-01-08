@@ -9,7 +9,7 @@ def seed_test_data():
         print("Seeding test data with per-player regions...")
 
         # 1. Create Regions
-        region_names = ["North America", "Europe", "Asia"]
+        region_names = ["West Delhi"]
         regions = {}
         for name in region_names:
             region = Region.query.filter_by(name=name).first()
@@ -21,14 +21,14 @@ def seed_test_data():
 
         # 2. Create Players and assign each to ONE region
         player_info = [
-            ("Alice", "North America"),
-            ("Bob", "North America"),
-            ("Charlie", "Europe"),
-            ("Diana", "Europe"),
-            ("Eve", "Asia"),
-            ("Frank", "Asia"),
-            ("Grace", "Asia"),
-            ("Hank", "North America")
+            ("Alice", "West Delhi"),
+            ("Bob", "West Delhi"),
+            ("Charlie", "West Delhi"),
+            ("Diana", "West Delhi"),
+            ("Eve", "West Delhi"),
+            ("Frank", "West Delhi"),
+            ("Grace", "West Delhi"),
+            ("Hank", "West Delhi")
         ]
         
         players = {}

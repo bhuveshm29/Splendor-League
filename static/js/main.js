@@ -30,30 +30,28 @@ async function loadLeaderboard() {
     const loading = document.getElementById('loading');
     const container = document.getElementById('leaderboard-container');
     const noPlayers = document.getElementById('no-players');
-    const tbody = document.getElementById('leaderboard-body');
-    const regionId = document.getElementById('region-filter').value;
+
+    // Region filter removed from UI for now as per design, defaulting to API default
 
     loading.classList.remove('hidden');
     container.classList.add('hidden');
-    noPlayers.classList.add('hidden');
+    if (noPlayers) noPlayers.classList.add('hidden');
 
     try {
-        const url = regionId ? `${API_BASE}/api/leaderboard?region_id=${regionId}` : `${API_BASE}/api/leaderboard`;
-        const response = await fetch(url);
+        const response = await fetch(`${API_BASE}/api/leaderboard`);
         const data = await response.json();
 
         loading.classList.add('hidden');
 
         if (data.length === 0) {
-            noPlayers.innerHTML = `<p class="text-muted">${regionId ? 'No rankings for this region yet.' : 'No players yet.'}</p>`;
-            noPlayers.classList.remove('hidden');
+            if (noPlayers) noPlayers.classList.remove('hidden');
             return;
         }
 
-        tbody.innerHTML = '';
+        container.innerHTML = '';
         data.forEach(player => {
-            const row = createLeaderboardRow(player);
-            tbody.appendChild(row);
+            const card = createLeaderboardCard(player);
+            container.appendChild(card);
         });
 
         container.classList.remove('hidden');
@@ -64,31 +62,54 @@ async function loadLeaderboard() {
     }
 }
 
-// Create leaderboard table row
-function createLeaderboardRow(player) {
-    const tr = document.createElement('tr');
-    tr.style.animation = 'fadeInUp 0.3s ease-out';
+// Create leaderboard card
+function createLeaderboardCard(player) {
+    const card = document.createElement('div');
 
-    const rankClass = player.rank <= 3 ? `rank-${player.rank}` : 'rank-other';
-    const playerId = player.player_id || player.id; // Support both structures
+    // Assign color class based on rank
+    let colorClass = 'card-neutral';
+    if (player.rank === 1) colorClass = 'card-blue';
+    else if (player.rank === 2) colorClass = 'card-teal';
+    else if (player.rank === 3) colorClass = 'card-green';
 
-    tr.innerHTML = `
-        <td>
-            <div class="rank-badge ${rankClass}">${player.rank}</div>
-        </td>
-        <td><strong>${escapeHtml(player.name)}</strong></td>
-        <td><span class="rating">${player.rating}</span></td>
-        <td>${player.games_played}</td>
-        <td>${player.win_rate}%</td>
-        <td>${player.average_points}</td>
-        <td>
-            <button class="btn btn-secondary" onclick="showPlayerDetails(${playerId})">
-                View Stats
-            </button>
-        </td>
+    card.className = `leaderboard-card ${colorClass}`;
+    card.style.animation = 'fadeInUp 0.3s ease-out';
+
+    const playerId = player.player_id || player.id;
+
+    // Placeholder avatar (using first letter)
+    const initial = player.name.charAt(0).toUpperCase();
+
+    card.innerHTML = `
+        <div class="card-left">
+            <div class="avatar">${initial}</div>
+            <div class="player-info">
+                <div class="player-name">${escapeHtml(player.name.toUpperCase())}</div>
+                <div class="player-title">${player.games_played} Games Played</div>
+            </div>
+        </div>
+        
+        <div class="card-metrics">
+            <div class="metric-group">
+                <span class="metric-label">Rating</span>
+                <span class="metric-value">${player.rating}</span>
+            </div>
+             <div class="metric-group">
+                <span class="metric-label">Win Rate</span>
+                <span class="metric-value">${player.win_rate}%</span>
+            </div>
+        </div>
+        
+        <div class="card-rank">
+            <span class="rank-number">${String(player.rank).padStart(3, '0')}</span>
+        </div>
+        
+        <div class="card-actions">
+             <button class="btn-invisible" onclick="showPlayerDetails(${playerId})"></button>
+        </div>
     `;
 
-    return tr;
+    return card;
 }
 
 // Show player details modal

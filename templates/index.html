@@ -4,68 +4,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Splendor Ratings - Leaderboard</title>
+    <title>Splendor League Leaderboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 
 <body>
     <div class="container">
         <header class="header">
-            <h1>🎲 Splendor Ratings</h1>
-            <p>OpenSkill Plackett-Luce Rankings</p>
-        </header>
-
-        <nav class="nav">
-            <a href="/" class="nav-link">Leaderboard</a>
-            <a href="/admin" class="nav-link">Admin Panel</a>
-        </nav>
-
-        <div class="card">
-            <div class="card-header">
-                <div style="display: flex; align-items: center; gap: var(--spacing-md);">
-                    <h2 class="card-title">Leaderboard</h2>
-                    <select id="region-filter" class="form-select" style="width: auto; margin-bottom: 0;"
-                        onchange="loadLeaderboard()">
-                        <option value="">Overall Rankings</option>
-                    </select>
+            <div class="leaderboard-wrapper">
+                <div class="leaderboard-title-section text-center">
+                    <img src="/static/img/atf_logo.png" alt="All Things Fun Logo" class="mb-2"
+                        style="height: 100px; margin-bottom: 15px;">
+                    <h1 class="main-title">LEADERBOARD</h1>
+                    <p class="subtitle">This is a custom leaderboard for All Things Fun Splendor League</p>
                 </div>
-                <button class="btn btn-secondary" onclick="loadLeaderboard()">
-                    🔄 Refresh
-                </button>
-            </div>
 
-            <div id="loading" class="text-center">
-                <div class="spinner"></div>
-                <p class="text-muted">Loading rankings...</p>
-            </div>
+                <div class="leaderboard-header-bar">
+                    <div class="col-name">NAME</div>
+                    <div class="col-metric">RATING / WIN RATE</div>
+                    <div class="col-rank">RANK</div>
+                </div>
 
-            <div id="leaderboard-container" class="hidden">
-                <div class="table-container">
-                    <table id="leaderboard-table">
-                        <thead>
-                            <tr>
-                                <th>Rank</th>
-                                <th>Player</th>
-                                <th>Rating</th>
-                                <th>Games</th>
-                                <th>Win Rate</th>
-                                <th>Avg Points</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="leaderboard-body">
-                        </tbody>
-                    </table>
+                <div id="loading" class="text-center mt-2">
+                    <div class="spinner"></div>
+                    <p class="text-muted">Loading rankings...</p>
+                </div>
+
+                <div id="leaderboard-container" class="hidden">
+                    <!-- Rows will be injected here by JS -->
                 </div>
             </div>
 
             <div id="no-players" class="hidden text-center">
                 <p class="text-muted">No players yet. Add players from the admin panel!</p>
             </div>
-        </div>
+    </div>
     </div>
 
     <!-- Player Details Modal -->
