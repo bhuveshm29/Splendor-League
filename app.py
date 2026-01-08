@@ -13,6 +13,10 @@ CORS(app)
 # Initialize database
 db.init_app(app)
 
+# Ensure tables exist (run within app context)
+with app.app_context():
+    db.create_all()
+
 
 def admin_required(f):
     """Decorator to require admin authentication"""
