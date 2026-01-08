@@ -51,8 +51,8 @@ class Player(db.Model):
     
     @property
     def rating(self):
-        """Current rating (mu) rounded to nearest whole number"""
-        return int(round(self.mu))
+        """Conservative rating (mu - 3*sigma) used for leaderboard"""
+        return int(max(0, round(self.mu - 3 * self.sigma)))
     
     @property
     def average_points(self):
